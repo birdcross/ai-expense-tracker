@@ -6,8 +6,9 @@
 
 - 로컬 앱: http://127.0.0.1:8017
 - 로컬 Swagger: http://127.0.0.1:8017/docs
-- Vercel 프론트 URL: **미배포 — 계정 연결 후 기입**
-- Render API URL 및 Swagger URL: **미배포 — 계정 연결 후 기입**
+- Vercel 앱·API URL: https://ai-expense-tracker-tau-sepia.vercel.app
+- 배포 Swagger: https://ai-expense-tracker-tau-sepia.vercel.app/docs
+- Render: 사용하지 않음. 현재 Vercel에서 화면과 FastAPI를 함께 실행합니다.
 - 기본값은 **시연 모드**입니다. 로컬 JSON에 영구 저장하고 채팅은 통계 기반 시연 문구를 반환합니다. 사진 인식은 실제처럼 흉내 내지 않고 비활성화합니다.
 - 현재 로컬 설정: 실제 OpenAI 호환 상담(`gpt-5-mini`), Anthropic 사진 분석(`claude-haiku-4`), Firestore 프로젝트 `sseumlog` 연결. 상담 응답, Firestore 쓰기·읽기, 가상 영수증과 상품 이미지 분석을 실검증했습니다. 프롬프트 수정 후 가상 영수증 2개 항목 12,200원과 가격 없는 상품의 금액 null 처리를 확인했습니다. 실제 촬영 사진의 정확도는 추가 확인이 필요합니다.
 - 120일 가상 지출 + 화면 저장 검증용 가상 지출 1건을 로컬에 준비했습니다. 실제 소비 기록이 아닙니다. 이 로컬 파일은 Git에서 제외됩니다.
@@ -141,6 +142,16 @@ Set-Location backend
 대화 목록에는 `messages`를 포함하지 않습니다. 개별 조회에서 전체 메시지를 반환합니다. 삭제는 즉시 반영되며 앱의 복구 기능은 없습니다.
 
 ## Render / Vercel 배포
+
+### 현재 방식: Vercel 한 프로젝트에 전체 앱 배포
+
+저장소 루트(`./`)와 FastAPI 프리셋을 사용합니다. 루트의 `app.py`, `requirements.txt`, `vercel.json`이 배포 진입점과 의존성을 지정합니다. 프론트는 같은 서버에서 제공하므로 `API_BASE_URL` 설정은 필요하지 않습니다.
+
+운영 환경에는 `APP_MODE=production`, `STORAGE_MODE=firestore`, `APP_ACCESS_TOKEN`, OpenAI 상담 설정, Anthropic 사진 분석 설정, `FIREBASE_PROJECT_ID`, `FIREBASE_SERVICE_ACCOUNT_JSON`을 Vercel 서버 전용 비공개 환경변수로 설정합니다. 현재 키는 Production에만 저장되어 있으며 GitHub에는 없습니다. 웹 화면의 연결 설정에는 앱 접근 암호만 입력합니다.
+
+실제 배포에서 비인증 API 차단, 비밀 파일 경로 404, Firestore 읽기·쓰기·수정, 상담 응답, 가상 영수증 12,200원 분석을 확인했습니다. 배포 확인용 지출과 상담 기록은 검사 후 삭제합니다.
+
+### 대안: 프론트 Vercel + 백엔드 Render 분리 배포
 
 1. 이 폴더를 GitHub 저장소에 올립니다. `.env`, 서비스 계정 파일, `.venv`, 시연 JSON을 올리지 않습니다.
 2. Render에서 저장소의 `render.yaml`을 Blueprint로 사용하거나 Web Service를 생성합니다. Root Directory `backend`, Build `pip install -r requirements.txt`, Start `uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1`.

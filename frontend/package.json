@@ -1,0 +1,1 @@
+{"name":"sseumlog-frontend","private":true,"scripts":{"build":"node build.mjs"}}

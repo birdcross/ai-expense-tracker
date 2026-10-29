@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Only the Python server's Admin SDK accesses the database.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

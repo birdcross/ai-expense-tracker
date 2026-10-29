@@ -1,0 +1,53 @@
+{
+  "results": [
+    {
+      "kind": "receipt",
+      "status": 200,
+      "seconds": 2.43,
+      "response": {
+        "date": "2026-10-29",
+        "merchant": "테스트 카페",
+        "items": [
+          {
+            "name": "아메리카노",
+            "category": "카페·간식",
+            "value": 9000,
+            "memo": "수량 2"
+          },
+          {
+            "name": "쿠키",
+            "category": "카페·간식",
+            "value": 3200,
+            "memo": "수량 1"
+          }
+        ],
+        "total": 12200,
+        "warnings": []
+      }
+    },
+    {
+      "kind": "product",
+      "status": 200,
+      "seconds": 2.65,
+      "response": {
+        "date": null,
+        "merchant": "",
+        "items": [
+          {
+            "name": "녹차 티백",
+            "category": "카페·간식",
+            "value": null,
+            "memo": "20개입"
+          }
+        ],
+        "total": null,
+        "warnings": [
+          "테스트/가상 상품 이미지로 실제 가격 정보 없음",
+          "하단 텍스트에서 '테스트용 상품 이미지·가격 정보 없음' 명시"
+        ]
+      }
+    }
+  ],
+  "records_before": 0,
+  "records_after": 0
+}

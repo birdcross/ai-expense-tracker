@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+local-data.json
+service-account*.json
+.vercel/
+frontend/dist/
+node_modules/
+*firebase-adminsdk*.json
+docs/screenshots/firebase-service-account.png

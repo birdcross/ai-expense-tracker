@@ -55,7 +55,7 @@ Windows에서 프로젝트 폴더의 `start.ps1`을 실행합니다. 현재 작�
 ```powershell
 py -3 -m venv .venv
 .venv/Scripts/python.exe -m pip install -r backend/requirements.txt
-Copy-Item backend/.env.example backend/.env
+New-Item backend/.env -ItemType File
 Set-Location backend
 ../.venv/Scripts/python.exe -m uvicorn main:app --reload --port 8017
 ```
@@ -184,4 +184,4 @@ node build.mjs
 
 ## 로컬 AI 연결 (추가)
 
-ackend/.env에서 APP_MODE=production, STORAGE_MODE=local, OPENAI_API_KEY를 설정하면 Firestore 없이 실제 AI와 로컬 저장을 함께 사용합니다. OpenAI 호환 게이트웨이는 OPENAI_BASE_URL=https://서비스주소/v1과 해당 서비스의 OPENAI_MODEL을 지정합니다. 키는 .env.example에 넣지 않습니다. 로컬 실행은 접근 암호 없이 가능하며, 외부 배포 시 APP_ACCESS_TOKEN을 설정하세요. Firestore 사용 시에는 STORAGE_MODE=firestore와 서비스 계정을 설정합니다.
+ackend/.env에서 APP_MODE=production, STORAGE_MODE=local, OPENAI_API_KEY를 설정하면 Firestore 없이 실제 AI와 로컬 저장을 함께 사용합니다. OpenAI 호환 게이트웨이는 OPENAI_BASE_URL=https://서비스주소/v1과 해당 서비스의 OPENAI_MODEL을 지정합니다. 실제 키는 Git에서 제외되는 backend/.env에만 넣습니다. 로컬 실행은 접근 암호 없이 가능하며, 외부 배포 시 APP_ACCESS_TOKEN을 설정하세요. Firestore 사용 시에는 STORAGE_MODE=firestore와 서비스 계정을 설정합니다.

@@ -1,6 +1,4 @@
-.env
-.env.*
-!.env.example
+.env*
 .venv/
 __pycache__/
 .pytest_cache/
@@ -12,3 +10,7 @@ frontend/dist/
 node_modules/
 *firebase-adminsdk*.json
 docs/screenshots/firebase-service-account.png
+*.pem
+*.key
+credentials*.json
+application_default_credentials.json

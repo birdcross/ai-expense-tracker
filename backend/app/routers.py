@@ -23,6 +23,8 @@ if MODE not in ('demo', 'production'):
     raise RuntimeError('APP_MODE must be demo or production')
 if MODE == 'production' and not os.getenv('OPENAI_API_KEY'):
     raise RuntimeError('Production requires OPENAI_API_KEY')
+if os.getenv('VERCEL') and (MODE != 'production' or not os.getenv('APP_ACCESS_TOKEN') or os.getenv('STORAGE_MODE') != 'firestore'):
+    raise RuntimeError('Vercel requires production mode, Firestore and APP_ACCESS_TOKEN')
 
 
 def authorized(x_app_token: str = Header(default='')):

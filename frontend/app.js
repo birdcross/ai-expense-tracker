@@ -17,6 +17,7 @@ async function request(path, options = {}) {
     const headers = {'X-App-Token':token, ...options.headers};
     if (options.body && !(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
     const response = await fetch(apiBase + '/api' + path, {...options, headers, signal:controller.signal});
+    if (response.status === 413) throw new Error('사진은 4MB 이하로 올려주세요. 사진 크기를 줄인 뒤 다시 시도해주세요.');
     if (!response.ok) { const data = await response.json().catch(() => ({})); throw new Error(typeof data.detail === 'string' ? data.detail : `입력 또는 서버 응답을 확인해주세요. (${response.status})`); }
     return response.status === 204 ? null : await response.json();
   } catch(e) { if (e.name === 'AbortError') throw new Error('서버 응답이 지연되고 있어요. 무료 서버의 첫 접속은 시간이 걸릴 수 있습니다. 잠시 후 다시 시도해주세요.'); if (e instanceof TypeError) throw new Error('서버에 연결하지 못했습니다. 연결 설정과 서버 상태를 확인해주세요.'); throw e; }
@@ -133,7 +134,7 @@ $('#add-item').onclick=()=>{readDraft();draft.push({name:'',category:'기타',va
 $('#draft-items').oninput=updateTotal;
 $('#draft-items').onclick=e=>{const b=e.target.closest('[data-remove]');if(b){readDraft();draft.splice(Number(b.dataset.remove),1);drawDraft();}};
 $('#entry-form').onsubmit=saveEntry;$('#analyze-button').onclick=analyze;
-$('#photo').onchange=()=>{const file=$('#photo').files[0];if(!file)return;if(file.size>8*1024*1024){toast('8MB 이하의 사진을 선택해주세요.');$('#photo').value='';return;} if(photoURL)URL.revokeObjectURL(photoURL);photoURL=URL.createObjectURL(file);$('#photo-preview').src=photoURL;$('#photo-preview').hidden=false;$('#analyze-button').disabled=false;$('#analysis-message').hidden=true;analyzed=false;expectedTotal=null;};
+$('#photo').onchange=()=>{const file=$('#photo').files[0];if(!file)return;if(file.size>4*1024*1024){toast('4MB 이하의 사진을 선택해주세요.');$('#photo').value='';return;} if(photoURL)URL.revokeObjectURL(photoURL);photoURL=URL.createObjectURL(file);$('#photo-preview').src=photoURL;$('#photo-preview').hidden=false;$('#analyze-button').disabled=false;$('#analysis-message').hidden=true;analyzed=false;expectedTotal=null;};
 $('#search').oninput=renderRecords;$('#filter-category').innerHTML+='<option>'+categories.join('</option><option>')+'</option>';$('#filter-category').onchange=renderRecords;
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-edit],[data-delete],[data-load],[data-delete-chat]');if(!b)return;try{
   if(b.dataset.edit)openEntry(rows.find(r=>r.id===b.dataset.edit));

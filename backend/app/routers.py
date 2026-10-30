@@ -120,9 +120,9 @@ async def analyze(file: UploadFile = File(...), kind: str = Form(...)):
         raise HTTPException(503, '시연 모드는 사진 인식을 제공하지 않습니다. OpenAI 호환 API를 설정하고 운영 모드로 전환해주세요.')
     if kind not in ('receipt','product'):
         raise HTTPException(422, '영수증 또는 상품 사진을 선택해주세요.')
-    raw = await file.read(8 * 1024 * 1024 + 1)
-    if len(raw) > 8 * 1024 * 1024:
-        raise HTTPException(413, '사진은 8MB 이하로 올려주세요.')
+    raw = await file.read(4 * 1024 * 1024 + 1)
+    if len(raw) > 4 * 1024 * 1024:
+        raise HTTPException(413, '사진은 4MB 이하로 올려주세요.')
     mime = 'image/jpeg' if raw.startswith(b'\xff\xd8\xff') else 'image/png' if raw.startswith(b'\x89PNG\r\n\x1a\n') else 'image/webp' if raw[:4] == b'RIFF' and raw[8:12] == b'WEBP' else None
     if not mime:
         raise HTTPException(415, 'JPG, PNG, WEBP 사진을 올려주세요.')

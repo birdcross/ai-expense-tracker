@@ -99,6 +99,16 @@ def test_image_file_validation(client,monkeypatch):
     assert client.post('/api/analyze',data={'kind':'wrong'},files={'file':('bad.jpg',b'abc','image/jpeg')}).status_code==422
 
 
+def test_image_size_limit_before_provider_call(client, monkeypatch):
+    from app import routers
+    monkeypatch.setattr(routers, 'MODE', 'production')
+    maximum = 4 * 1024 * 1024
+    oversized = client.post('/api/analyze', data={'kind': 'receipt'}, files={'file': ('large.png', b'x' * (maximum + 1), 'image/png')})
+    assert oversized.status_code == 413 and '4MB' in oversized.json()['detail']
+    boundary = client.post('/api/analyze', data={'kind': 'receipt'}, files={'file': ('invalid.png', b'x' * maximum, 'image/png')})
+    assert boundary.status_code == 415
+
+
 def test_local_storage_with_real_ai_mode(tmp_path, monkeypatch):
     from app.store import Store
     monkeypatch.setenv('APP_MODE', 'production')

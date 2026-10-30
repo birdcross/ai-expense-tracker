@@ -81,16 +81,18 @@ function openEntry(row=null){
   editing=row; $('#entry-title').textContent=row?'지출 기록 수정':'어떤 소비를 했나요?'; $('#upload-section').hidden=!!row; $('#entry-date').value=row?.date||localDate(); $('#entry-merchant').value=row?.merchant||''; setKind(row?'manual':'receipt');
   if(row){draft=[{...row}];drawDraft();} $('#entry-dialog').showModal();
 }
-function notifyAnalysis(message){$('#analysis-message').textContent=message;$('#analysis-message').hidden=false;}
+function notifyAnalysis(message,tone='warning'){const notice=$('#analysis-message');notice.textContent=message;notice.hidden=false;notice.style.background=tone==='success'?'var(--soft)':'';notice.style.color=tone==='success'?'var(--accent)':'';}
 async function analyze(){
   const file=$('#photo').files[0]; if(!file)return;
   const button=$('#analyze-button');button.disabled=true;button.textContent='사진 분석 중…';
   try{
     const data=new FormData();data.append('file',file);data.append('kind',kind);
     const result=await request('/analyze',{method:'POST',body:data});
-    draft=result.items; expectedTotal=result.total; analyzed=true;
+    draft=result.items; expectedTotal=kind==='receipt'?result.total:null; analyzed=true;
     $('#entry-date').value=result.date||localDate();$('#entry-merchant').value=result.merchant||'';drawDraft();
-    notifyAnalysis(result.warnings.length?result.warnings.join('\n'):'분석이 완료됐어요. 상품명·분류·금액을 확인해주세요.');
+    const manualPrice=kind==='product'&&draft.some(d=>d.value===null)&&draft.every(d=>d.name!=='확인 필요');
+    const messages=manualPrice?['상품명과 분류를 입력했어요. 금액은 실제 결제금액을 직접 입력해주세요.',...result.warnings]:result.warnings;
+    notifyAnalysis(messages.length?messages.join('\n'):'분석이 완료됐어요. 상품명·분류·금액을 확인해주세요.',manualPrice||!result.warnings.length?'success':'warning');
   }catch(e){notifyAnalysis(e.message+'\n아래에서 직접 입력해 저장할 수 있어요.');}
   finally{button.disabled=false;button.textContent='다시 분석하기 ✧';}
 }

@@ -192,3 +192,17 @@ def test_empty_chat_answer_is_not_saved(client, monkeypatch):
     response = client.post('/api/chat', json={'message':'질문'})
     assert response.status_code == 502
     assert client.get('/api/conversations').json() == []
+
+
+def test_product_without_price_is_valid_and_does_not_require_a_total(monkeypatch):
+    import json
+    from types import SimpleNamespace as NS
+    from app import services
+    payload = {'items':[{'name':'비빔밥','category':'식비','value':None}], 'total':0, 'warnings':[]}
+    def create(**kwargs):
+        return NS(choices=[NS(message=NS(content=json.dumps(payload)))])
+    monkeypatch.setattr(services, 'client', lambda:NS(chat=NS(completions=NS(create=create))))
+    result = services.analyze_image('data:image/png;base64,aA==', 'product')
+    assert result['items'][0]['name'] == '비빔밥'
+    assert result['items'][0]['value'] is None
+    assert result['total'] is None and result['warnings'] == []

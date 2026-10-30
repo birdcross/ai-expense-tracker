@@ -1,0 +1,44 @@
+{
+  "checked_at": "2026-10-30T10:56:47.165274+09:00",
+  "url": "https://ai-expense-tracker-tau-sepia.vercel.app",
+  "checks": [
+    {
+      "name": "manual expense create and edit through browser",
+      "passed": true
+    },
+    {
+      "name": "search by item name",
+      "passed": true
+    },
+    {
+      "name": "category filter",
+      "passed": true
+    },
+    {
+      "name": "empty search result",
+      "passed": true
+    },
+    {
+      "name": "CSV download and UTF-8 Korean columns",
+      "passed": true
+    },
+    {
+      "name": "receipt upload and analysis through browser",
+      "passed": true
+    },
+    {
+      "name": "dark theme toggle",
+      "passed": true
+    },
+    {
+      "name": "dark theme persistence after reload",
+      "passed": true
+    },
+    {
+      "name": "390px mobile layout without document overflow",
+      "passed": true
+    }
+  ],
+  "temporary_ui_record_removed": true,
+  "scope": "Synthetic images and disposable verification records; no claim of perfect OCR on real photos."
+}

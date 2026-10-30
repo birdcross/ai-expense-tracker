@@ -19,4 +19,4 @@ if frontend.exists():
     app.mount('/assets', StaticFiles(directory=frontend), name='assets')
     @app.get('/')
     def index():
-        return FileResponse(frontend / 'index.html')
+        return FileResponse(frontend / 'index.html', headers={'Cache-Control': 'no-store'})

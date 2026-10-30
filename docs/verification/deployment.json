@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-10-30T10:50:11.013723+09:00",
+  "url": "https://ai-expense-tracker-tau-sepia.vercel.app",
+  "checks": [
+    {
+      "name": "public UI, static files, health and Swagger",
+      "passed": true
+    },
+    {
+      "name": "missing/wrong passwords denied; secret file URLs inaccessible",
+      "passed": true
+    },
+    {
+      "name": "production mode and Firestore",
+      "passed": true
+    },
+    {
+      "name": "dashboard counts, total, daily and category aggregates",
+      "passed": true
+    },
+    {
+      "name": "expense create, update and persisted read",
+      "passed": true
+    },
+    {
+      "name": "batch save and atomic rejection of invalid input",
+      "passed": true
+    },
+    {
+      "name": "production seed protection and missing-record handling",
+      "passed": true
+    },
+    {
+      "name": "image format, kind and 4 MiB upload validation",
+      "passed": true
+    },
+    {
+      "name": "real Anthropic analysis: receipt",
+      "passed": true
+    },
+    {
+      "name": "real Anthropic analysis: product",
+      "passed": true
+    },
+    {
+      "name": "conversation save/list/load",
+      "passed": true
+    },
+    {
+      "name": "real OpenAI chat, autosave and conversation continuation",
+      "passed": true
+    },
+    {
+      "name": "temporary records removed and existing expense records preserved",
+      "passed": true
+    }
+  ],
+  "cleanup_success": true,
+  "cleanup_errors": [],
+  "all_passed": true
+}

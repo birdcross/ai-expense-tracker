@@ -157,12 +157,15 @@ py -3 -m venv .venv
 ```powershell
 .venv/Scripts/python.exe -m pytest backend/tests -q
 node --check frontend/app.js
+node --test frontend/tests/chat-input.test.mjs
 # 선택: 분리 배포용 정적 빌드
 Set-Location frontend
 node build.mjs
 ```
 
 자동 테스트 **13개**는 CRUD·입력 검증, 일괄 저장 원자성, 통계, 상담 저장·이어가기·삭제, 시연 데이터, 인증, 이미지 형식·용량, AI 응답 검증, Anthropic 요청 형식, 정적 파일 제공 등을 확인합니다. 자동 테스트는 임시 로컬 저장소와 모의 AI 응답을 사용합니다.
+
+프론트 채팅 입력 테스트 **4개**는 전송 즉시 입력창 초기화, 중복 전송 방지, 대기 중 작성한 다음 질문 보존, 실패 시 원문 복원을 확인합니다.
 
 **2026-10-30 최종 확인:** 자동 테스트 13개, 배포 실연동 검사 13개를 통과했습니다. 실제 화면에서도 직접 입력·수정, 검색·필터·빈 결과, CSV 파일의 한글·열 구성, 영수증 업로드·분석, 다크 모드 유지, 모바일 표시를 확인했습니다. 검증용 지출·상담은 삭제했고 기존 기록은 보존했습니다.
 

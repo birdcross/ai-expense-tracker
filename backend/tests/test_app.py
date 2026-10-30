@@ -154,3 +154,41 @@ def test_anthropic_vision_native_protocol(monkeypatch):
     payload['items'][0]['value'] = -1
     with pytest.raises(ValueError):
         services.analyze_image('data:image/png;base64,aA==', 'receipt')
+
+
+def test_chat_completion_budget_and_legacy_blank_history(monkeypatch):
+    from types import SimpleNamespace as NS
+    from app import services
+    monkeypatch.setenv('APP_MODE', 'production')
+    def create(**kwargs):
+        assert kwargs['max_completion_tokens'] == 4096
+        assert len(kwargs['messages']) == 2
+        assert kwargs['messages'][-1]['content'] == '질문'
+        return NS(choices=[NS(message=NS(content=' 답변 '), finish_reason='stop')])
+    monkeypatch.setattr(services, 'client', lambda: NS(chat=NS(completions=NS(create=create))))
+    assert services.answer([{'role':'assistant','content':''},{'role':'user','content':'질문'}], {}) == '답변'
+
+
+def test_chat_retries_token_limited_empty_answer(monkeypatch):
+    from types import SimpleNamespace as NS
+    from app import services
+    monkeypatch.setenv('APP_MODE', 'production')
+    budgets = []
+    def create(**kwargs):
+        budgets.append(kwargs['max_completion_tokens'])
+        return NS(choices=[NS(message=NS(content='' if len(budgets)==1 else '정상 답변'), finish_reason='length' if len(budgets)==1 else 'stop')])
+    monkeypatch.setattr(services, 'client', lambda: NS(chat=NS(completions=NS(create=create))))
+    assert services.answer([{'role':'user','content':'질문'}], {}) == '정상 답변'
+    assert budgets == [4096, 8192]
+
+
+def test_empty_chat_answer_is_not_saved(client, monkeypatch):
+    from types import SimpleNamespace as NS
+    from app import services
+    monkeypatch.setenv('APP_MODE', 'production')
+    def create(**kwargs):
+        return NS(choices=[NS(message=NS(content=''), finish_reason='stop')])
+    monkeypatch.setattr(services, 'client', lambda: NS(chat=NS(completions=NS(create=create))))
+    response = client.post('/api/chat', json={'message':'질문'})
+    assert response.status_code == 502
+    assert client.get('/api/conversations').json() == []

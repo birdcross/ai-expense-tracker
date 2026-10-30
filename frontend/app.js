@@ -114,8 +114,8 @@ async function sendChat(e){
   input.value='';input.focus();
   const previous=currentConversation?.messages||[];drawMessages([...previous,{role:'user',content:message}]);
   const loading=document.createElement('div');loading.className='message assistant loading';loading.textContent='지출 기록을 살펴보고 있어요…';$('#messages').append(loading);$('#messages').scrollTop=$('#messages').scrollHeight;
-  try{currentConversation=await request('/chat',{method:'POST',body:JSON.stringify({message,conversation_id:currentConversation?.id||null})});drawMessages(currentConversation.messages);}
-  catch(err){drawMessages(previous);if(input.value==='')input.value=draftMessage;toast(err.message);}finally{busyChat=false;$('#send-chat').disabled=false;}
+  try{const result=await request('/chat',{method:'POST',body:JSON.stringify({message,conversation_id:currentConversation?.id||null})});if(!result.messages?.at(-1)?.content?.trim())throw new Error('AI가 빈 답변을 반환했습니다. 잠시 후 다시 전송해주세요.');currentConversation=result;drawMessages(currentConversation.messages);}
+  catch(err){drawMessages([...previous,{role:'user',content:message},{role:'assistant',content:'답변을 받지 못했어요. '+err.message}]);if(input.value==='')input.value=draftMessage;toast(err.message);}finally{busyChat=false;$('#send-chat').disabled=false;}
 }
 async function loadHistory(){const history=await request('/conversations');$('#history-list').innerHTML=history.map(c=>`<article class="history-card"><div class="small-label">SAVED CONVERSATION</div><h3>${esc(c.title)}</h3><p>${esc(new Date(c.updated_at).toLocaleString('ko-KR'))}</p><button class="primary" data-load="${esc(c.id)}">대화 이어보기 →</button><button data-delete-chat="${esc(c.id)}">삭제</button></article>`).join('')||'<div class="empty"><strong>아직 저장된 대화가 없어요.</strong>AI 소비 상담에서 첫 질문을 보내보세요.</div>';}
 function downloadCSV(){

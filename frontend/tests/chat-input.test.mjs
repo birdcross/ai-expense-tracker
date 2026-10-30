@@ -23,13 +23,13 @@ test('clears sent text immediately and prevents duplicate sends while waiting',a
   assert.equal(s.button.disabled,true);
   await s.send();
   assert.equal(s.calls(),1);
-  s.resolve({id:'chat',messages:[]});await pending;
+  s.resolve({id:'chat',messages:[{role:'assistant',content:'응답'}]});await pending;
   assert.equal(s.button.disabled,false);
 });
 
 test('a successful answer preserves the next question typed while waiting',async()=>{
   const s=setup(),pending=s.send();s.input.value='다음 질문';
-  s.resolve({id:'chat',messages:[]});await pending;
+  s.resolve({id:'chat',messages:[{role:'assistant',content:'응답'}]});await pending;
   assert.equal(s.input.value,'다음 질문');
 });
 
@@ -44,4 +44,11 @@ test('failed sends do not overwrite a new draft',async()=>{
   const s=setup(),pending=s.send();s.input.value='보존할 새 질문';
   s.reject(new Error('Connection failed'));await pending;
   assert.equal(s.input.value,'보존할 새 질문');
+});
+
+test('an empty API answer is rejected and restores the question',async()=>{
+  const s=setup(),original=s.input.value,pending=s.send();
+  s.resolve({id:'chat',messages:[{role:'assistant',content:''}]});await pending;
+  assert.equal(s.input.value,original);
+  assert.equal(s.context.currentConversation,null);
 });
